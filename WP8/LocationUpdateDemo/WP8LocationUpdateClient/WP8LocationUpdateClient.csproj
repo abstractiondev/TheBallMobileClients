@@ -148,6 +148,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Ext\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="WebSocket4Net">
       <HintPath>..\Ext\WebSocket4Net.dll</HintPath>
     </Reference>

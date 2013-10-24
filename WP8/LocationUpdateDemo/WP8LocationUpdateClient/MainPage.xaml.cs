@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using Newtonsoft.Json.Linq;
 using SecuritySupport;
 using WP8LocationUpdateClient.Resources;
 using Windows.Devices.Geolocation;
@@ -122,8 +123,8 @@ namespace WP8LocationUpdateClient
                 return;
             }
             string groupID = tGroupID.Text;
-            //if (groupID == "")
-            //    groupID = "fd17836d-30e4-4d96-ae95-9217ac48867d";
+            if (groupID == "")
+                groupID = "fd17836d-30e4-4d96-ae95-9217ac48867d";
             if (String.IsNullOrEmpty(groupID))
             {
                 MessageBox.Show("Please enter the Group ID");
@@ -154,6 +155,8 @@ namespace WP8LocationUpdateClient
             bool isAuthenticated = IsolatedStorageSettings.ApplicationSettings.Contains("GroupID");
             NegotiatedContentPanel.Visibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
             NegotiationPanel.Visibility = isAuthenticated ? Visibility.Collapsed : Visibility.Visible;
+            if (!isAuthenticated)
+                tGroupName.Text = "";
         }
 
         private void StoreNegotiatedCredentials(SecurityNegotiationResult result, string hostName, string groupId)
@@ -166,12 +169,64 @@ namespace WP8LocationUpdateClient
             updateControls();
         }
 
+
+
+        private void UpdateGroupName_Click(object sender, RoutedEventArgs e)
+        {
+            GetBinaryContentFromTheBall("AaltoGlobalImpact.OIP/GroupContainer/default.json", groupContainerJsonHandler);
+        }
+
+
+        private void groupContainerJsonHandler(byte[] obj)
+        {
+            string content = Encoding.UTF8.GetString(obj, 0, obj.Length);
+            var jObject = JObject.Parse(content);
+            string groupName = jObject["GroupProfile"]["GroupName"].Value<string>();
+            Deployment.Current.Dispatcher.BeginInvoke(() => tGroupName.Text = groupName);
+        }
+
         private void PushContentToGroup_Click(object sender, RoutedEventArgs e)
         {
             string remoteContentName = "mylocation.txt";
             string textContent = LatitudeTextBlock.Text + "," + LongitudeTextBlock.Text;
             PushContentToTheBall(remoteContentName, textContent: textContent);
         }
+        
+        private static void GetBinaryContentFromTheBall(string remoteContentLocationFromOwnerRoot, Action<byte[]> handleBinaryResult)
+        {
+            string hostName = (string)IsolatedStorageSettings.ApplicationSettings["HostName"];
+            string groupID = (string)IsolatedStorageSettings.ApplicationSettings["GroupID"];
+            byte[] aesKey = (byte[])IsolatedStorageSettings.ApplicationSettings["AESKey"];
+            string establishedTrustID = (string)IsolatedStorageSettings.ApplicationSettings["EstablishedTrustID"];
+            string destinationUrl = string.Format("https://{0}/auth/grp/{1}/{2}", hostName, groupID, remoteContentLocationFromOwnerRoot);
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(destinationUrl);
+            request.Method = "GET";
+            request.Headers["Authorization"] = "DeviceAES::" + establishedTrustID + ":";
+            request.BeginGetResponse(asyncResult =>
+                {
+                    var req = (HttpWebRequest) asyncResult.AsyncState;
+                    var response = (HttpWebResponse) req.EndGetResponse(asyncResult);
+                    if (response.StatusCode != HttpStatusCode.OK)
+                        throw new InvalidOperationException("Authroized fetch failed with non-OK status code");
+                    string ivStr = response.Headers["IV"];
+                    var respStream = response.GetResponseStream();
+                    AesManaged aes = new AesManaged();
+                    aes.KeySize = 256;
+                    aes.IV = Convert.FromBase64String(ivStr);
+                    aes.Key = aesKey;
+                    var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+                    CryptoStream cryptoStream = new CryptoStream(respStream, decryptor, CryptoStreamMode.Read);
+                    byte[] dataContent;
+                    using (var ms = new MemoryStream())
+                    {
+                        cryptoStream.CopyTo(ms);
+                        dataContent= ms.ToArray();
+                    }
+                    handleBinaryResult(dataContent);
+                }, request);
+        }
+
 
         private static void PushContentToTheBall(string remoteContentName, byte[] binaryContent= null, string textContent = null)
         {

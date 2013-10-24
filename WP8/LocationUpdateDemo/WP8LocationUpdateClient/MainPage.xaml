@@ -49,11 +49,16 @@
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <StackPanel>
                 <StackPanel x:Name="NegotiatedContentPanel">
+                    <Button x:Name="UpdateGroupName" Click="UpdateGroupName_Click" Content="Update group name"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>Group: </TextBlock>
+                        <TextBlock x:Name="tGroupName"></TextBlock>
+                    </StackPanel>
                     <Button x:Name="OneShotLocationButton" Click="OneShotLocation_Click" Content="Get one-shot location"/>
                     <TextBlock x:Name="LatitudeTextBlock"/>
                     <TextBlock x:Name="LongitudeTextBlock"/>
-                    <Button x:Name="PushContentToGroup" Click="PushContentToGroup_Click" Content="Push Content to Group"/>
-                    <Button x:Name="RemoveGroupCredentials" Click="RemoveGroupCredentials_Click" Content="Remove Credentials"/>
+                    <Button x:Name="PushContentToGroup" Click="PushContentToGroup_Click" Content="Push content to group"/>
+                    <Button x:Name="RemoveGroupCredentials" Click="RemoveGroupCredentials_Click" Content="Remove credentials"/>
                 </StackPanel>
                 <StackPanel x:Name="NegotiationPanel">
                     <TextBlock x:Name="StatusTextBlock"/>
