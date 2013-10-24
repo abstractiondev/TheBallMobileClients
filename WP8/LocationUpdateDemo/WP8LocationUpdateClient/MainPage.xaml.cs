@@ -5,6 +5,7 @@ using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -25,6 +26,12 @@ namespace WP8LocationUpdateClient
 
             // Sample code to localize the ApplicationBar
             //BuildLocalizedApplicationBar();
+            this.Loaded += MainPage_Loaded;
+        }
+
+        void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            updateControls();
         }
 
         // Sample code for building a localized ApplicationBar
@@ -142,6 +149,13 @@ namespace WP8LocationUpdateClient
                 }
         }
 
+        private void updateControls()
+        {
+            bool isAuthenticated = IsolatedStorageSettings.ApplicationSettings.Contains("GroupID");
+            NegotiatedContentPanel.Visibility = isAuthenticated ? Visibility.Visible : Visibility.Collapsed;
+            NegotiationPanel.Visibility = isAuthenticated ? Visibility.Collapsed : Visibility.Visible;
+        }
+
         private void StoreNegotiatedCredentials(SecurityNegotiationResult result, string hostName, string groupId)
         {
             IsolatedStorageSettings.ApplicationSettings["AESKey"] = result.AESKey;
@@ -149,26 +163,38 @@ namespace WP8LocationUpdateClient
             IsolatedStorageSettings.ApplicationSettings["HostName"] = hostName;
             IsolatedStorageSettings.ApplicationSettings["GroupID"] = groupId;
             IsolatedStorageSettings.ApplicationSettings.Save();
+            updateControls();
         }
 
         private void PushContentToGroup_Click(object sender, RoutedEventArgs e)
         {
-            string hostName = (string) IsolatedStorageSettings.ApplicationSettings["HostName"];
+            string remoteContentName = "mylocation.txt";
+            string textContent = LatitudeTextBlock.Text + "," + LongitudeTextBlock.Text;
+            PushContentToTheBall(remoteContentName, textContent: textContent);
+        }
+
+        private static void PushContentToTheBall(string remoteContentName, byte[] binaryContent= null, string textContent = null)
+        {
+            if (binaryContent != null && textContent != null)
+                throw new ArgumentException("Only either of binaryContent and textContent is allowed");
+            if (binaryContent == null && textContent == null)
+                throw new ArgumentException("Either of binaryContent and textContent is required");
+            if(binaryContent == null)
+                binaryContent = Encoding.UTF8.GetBytes(textContent);
+            string hostName = (string)IsolatedStorageSettings.ApplicationSettings["HostName"];
             string groupID = (string) IsolatedStorageSettings.ApplicationSettings["GroupID"];
             byte[] aesKey = (byte[]) IsolatedStorageSettings.ApplicationSettings["AESKey"];
             string establishedTrustID = (string) IsolatedStorageSettings.ApplicationSettings["EstablishedTrustID"];
             string destinationUrl = string.Format("https://{0}/auth/grp/{1}", hostName, groupID);
-            string location = LatitudeTextBlock.Text + "," + LongitudeTextBlock.Text;
-            string locationContentName = "mylocation.txt";
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(destinationUrl);
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(destinationUrl);
             request.Method = "POST";
             AesManaged aes = new AesManaged();
             aes.KeySize = 256;
             aes.GenerateIV();
             aes.Key = aesKey;
             var ivBase64 = Convert.ToBase64String(aes.IV);
-            request.Headers["Authorization"] = "DeviceAES:" + ivBase64 + ":" + establishedTrustID + ":" + locationContentName;
+            request.Headers["Authorization"] = "DeviceAES:" + ivBase64 + ":" + establishedTrustID + ":" + remoteContentName;
             request.BeginGetRequestStream(result =>
                 {
                     HttpWebRequest req = (HttpWebRequest) result.AsyncState;
@@ -176,22 +202,35 @@ namespace WP8LocationUpdateClient
 
                     var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
                     var cryptoStream = new CryptoStream(requestStream, encryptor, CryptoStreamMode.Write);
-                    StreamWriter writer = new StreamWriter(cryptoStream);
-                    writer.WriteLine(location);
+                    BinaryWriter writer = new BinaryWriter(cryptoStream);
+                    writer.Write(binaryContent);
                     writer.Flush();
                     cryptoStream.Close();
                     req.BeginGetResponse(respResult =>
                         {
-
                             var respReq = (HttpWebRequest) respResult.AsyncState;
-                            var response = (HttpWebResponse) respReq.EndGetResponse(respResult);
+                            HttpWebResponse response = (HttpWebResponse) respReq.EndGetResponse(respResult);
                             if (response.StatusCode != HttpStatusCode.OK)
                                 throw new InvalidOperationException(
                                     "PushToInformationOutput failed with Http status: " +
                                     response.StatusCode.ToString());
                         }, req);
                 }, request);
+        }
 
+        private void RemoveGroupCredentials_Click(object sender, RoutedEventArgs e)
+        {
+            bool confirmResult = MessageBox.Show("Remove group credentials?", "Confirm", MessageBoxButton.OKCancel) ==
+                                 MessageBoxResult.OK;
+            if (confirmResult)
+            {
+                IsolatedStorageSettings.ApplicationSettings.Remove("AESKey");
+                IsolatedStorageSettings.ApplicationSettings.Remove("EstablishedTrustID");
+                IsolatedStorageSettings.ApplicationSettings.Remove("HostName");
+                IsolatedStorageSettings.ApplicationSettings.Remove("GroupID");
+                IsolatedStorageSettings.ApplicationSettings.Save();
+            }
+            updateControls();
         }
     }
 }

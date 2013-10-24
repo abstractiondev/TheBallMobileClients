@@ -48,13 +48,14 @@
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <StackPanel>
-                <StackPanel x:Name="Content">
+                <StackPanel x:Name="NegotiatedContentPanel">
                     <Button x:Name="OneShotLocationButton" Click="OneShotLocation_Click" Content="Get one-shot location"/>
                     <TextBlock x:Name="LatitudeTextBlock"/>
                     <TextBlock x:Name="LongitudeTextBlock"/>
                     <Button x:Name="PushContentToGroup" Click="PushContentToGroup_Click" Content="Push Content to Group"/>
+                    <Button x:Name="RemoveGroupCredentials" Click="RemoveGroupCredentials_Click" Content="Remove Credentials"/>
                 </StackPanel>
-                <StackPanel x:Name="Negotiate">
+                <StackPanel x:Name="NegotiationPanel">
                     <TextBlock x:Name="StatusTextBlock"/>
                     <TextBlock Text="The Ball host name"></TextBlock>
                     <TextBox x:Name="tHostName"></TextBox>
