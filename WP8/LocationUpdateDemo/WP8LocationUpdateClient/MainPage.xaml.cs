@@ -20,6 +20,7 @@ namespace WP8LocationUpdateClient
 {
     public partial class MainPage : PhoneApplicationPage
     {
+        const string DEFAULT_GROUP_ID_FOR_DEV_USAGE = ""; // Set to default group for repeated testing to skip the Guid entering key-by-key
         // Constructor
         public MainPage()
         {
@@ -124,7 +125,7 @@ namespace WP8LocationUpdateClient
             }
             string groupID = tGroupID.Text;
             if (groupID == "")
-                groupID = "fd17836d-30e4-4d96-ae95-9217ac48867d";
+                groupID = DEFAULT_GROUP_ID_FOR_DEV_USAGE;
             if (String.IsNullOrEmpty(groupID))
             {
                 MessageBox.Show("Please enter the Group ID");
@@ -167,6 +168,8 @@ namespace WP8LocationUpdateClient
             IsolatedStorageSettings.ApplicationSettings["GroupID"] = groupId;
             IsolatedStorageSettings.ApplicationSettings.Save();
             updateControls();
+            MessageBox.Show("Remember to validate the device by the emailed link (otherwise fetch/push will fail)",
+                            "Note!", MessageBoxButton.OK);
         }
 
 
