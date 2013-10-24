@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WP8LocationUpdateClient", "WP8LocationUpdateClient\WP8LocationUpdateClient.csproj", "{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPSecuritySupport", "WPSecuritySupport\WPSecuritySupport.csproj", "{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|ARM = Debug|ARM
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|ARM = Release|ARM
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Debug|ARM.ActiveCfg = Debug|ARM
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Debug|ARM.Build.0 = Debug|ARM
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Debug|ARM.Deploy.0 = Debug|ARM
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Debug|x86.ActiveCfg = Debug|x86
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Debug|x86.Build.0 = Debug|x86
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Debug|x86.Deploy.0 = Debug|x86
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Release|ARM.ActiveCfg = Release|ARM
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Release|ARM.Build.0 = Release|ARM
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Release|ARM.Deploy.0 = Release|ARM
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Release|x86.ActiveCfg = Release|x86
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Release|x86.Build.0 = Release|x86
+		{C0FF6BC9-CE33-4B83-97CD-238A860F0D19}.Release|x86.Deploy.0 = Release|x86
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Debug|ARM.ActiveCfg = Debug|ARM
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Debug|ARM.Build.0 = Debug|ARM
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Debug|x86.ActiveCfg = Debug|x86
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Debug|x86.Build.0 = Debug|x86
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Release|ARM.ActiveCfg = Release|ARM
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Release|ARM.Build.0 = Release|ARM
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Release|x86.ActiveCfg = Release|x86
+		{A5D69404-5FAC-4DDC-BFBC-ED70A2433129}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
